@@ -1,0 +1,38 @@
+.container {
+    position: relative;
+}
+.loader {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgb(255, 255, 255);
+    opacity: 0.7;
+    z-index: 9999;
+}
+.loader:before {
+    content:  url(assets/loader.gif);
+    display: block;
+    color: #FFFFFF;
+    text-align: center;
+    position: relative;
+    margin: 20% auto;
+    font-size: 35px;
+
+}
+.clickable {
+    cursor: pointer;    
+}
+.link {
+    color: #119DCE;
+}
+.glyphicon {
+    font-size: 13px;
+    color: #337ab7;
+    margin-left: 3px;
+}
+.icon-btn {
+    background: transparent;
+    border: none;
+}

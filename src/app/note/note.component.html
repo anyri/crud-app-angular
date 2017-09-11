@@ -1,0 +1,15 @@
+<div  class="loader" *ngIf="pending"></div>
+
+<div *ngIf="!pending && currentNote">
+  <h2>{{currentNote.name}}</h2>
+  <h6>Created: {{currentNote.createdAt | date}}</h6>
+  <h5>Description:</h5>
+  <p>
+    {{currentNote.description}}
+  </p>
+  <h5>Text:</h5>
+  <p>
+    {{currentNote.text}}
+  </p>
+</div>
+

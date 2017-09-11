@@ -1,0 +1,31 @@
+<div class="loader" *ngIf="pending"></div>
+
+<div *ngIf="notes.length">
+   
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th (click)="sort('createdAt')" class="clickable link">Created<span class="glyphicon" [ngClass]="{'glyphicon-sort' : checkSort('createdAt', ''), 'glyphicon-arrow-up' : checkSort('createdAt', 'asc'), 'glyphicon-arrow-down' : checkSort('createdAt', 'desc') }"></span></th>
+                <th (click)="sort('updatedAt')" class="clickable link">Updated<span class="glyphicon" [ngClass]="{'glyphicon-sort' : checkSort('updatedAt', ''), 'glyphicon-arrow-up' : checkSort('updatedAt', 'asc'), 'glyphicon-arrow-down' : checkSort('updatedAt', 'desc') }"></span></th>
+                <th (click)="sort('name')" class="clickable link">Name<span class="glyphicon" [ngClass]="{'glyphicon-sort' : checkSort('name', ''), 'glyphicon-arrow-up' : checkSort('name', 'asc'), 'glyphicon-arrow-down' : checkSort('name', 'desc') }"></span></th>
+                <th>Description</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let note of notes">
+                <td class="col-md-1"><span>{{note.createdAt | date }}</span></td>
+                <td class="col-md-1"><span>{{note.updatedAt | date }}</span></td>
+                <td class="col-md-2"><a [routerLink]="['/note', note.id]">{{note.name}}</a></td>
+                <td class="col-md-8">{{note.description}}</td>
+                <td><button [disabled]="removeProcess" (click)="confirmRemove(note)" class="icon-btn"> <span class="glyphicon glyphicon-remove-circle"></span></button></td>
+                <!-- <td><button [disabled]="note.pending" (click)="removeNote(note)" class="icon-btn"> <span class="glyphicon glyphicon-remove-circle"></span></button></td> -->
+            </tr>
+
+        </tbody>
+    </table>
+
+    <pagination class="pagination-sm" *ngIf="total" [boundaryLinks]="true" [totalItems]="total" [(ngModel)]="params.page" previousText="&lsaquo;"
+        nextText="&rsaquo;" firstText="&laquo;" lastText="&raquo;" [itemsPerPage]="params.count" (click)="getNotes()">
+    </pagination>
+</div>
