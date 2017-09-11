@@ -6,6 +6,7 @@ import { ErrorMessages } from '../error-page/error.messages';
 import { NotesParams } from './notes-params.model';
 import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/modal-options.class';
+import { Subscription } from 'rxjs/Subscription';
 import { ConfirmContentComponent } from '../confirmation/confirm.content.component';
 
 @Component({
@@ -20,10 +21,10 @@ export class NotesComponent implements OnInit {
   removeProcess: boolean;
   params: NotesParams;
   bsModalRef: BsModalRef;
-  
+
   constructor(private noteService: NotesService, private router: Router, private modalService: BsModalService) {
     this.params = this.noteService.getParams();
-    if(this.noteService.isError) this.params.page = 1;
+    if (this.noteService.isError) this.params.page = 1;
   }
 
   ngOnInit() {
@@ -54,46 +55,47 @@ export class NotesComponent implements OnInit {
   }
 
   confirmRemove(note: Note) {
-    if(this.removeProcess)
+    if (this.removeProcess)
       return;
 
-    this.bsModalRef = this.modalService.show(ConfirmContentComponent);   
-    this.bsModalRef.content.title = `Are you sure, that you want to delete ${note.name}?`  
+    this.bsModalRef = this.modalService.show(ConfirmContentComponent);
+    this.bsModalRef.content.title = `Are you sure, that you want to delete ${note.name}?`
 
-    this.modalService.onHide.subscribe(
+    let subsribeOnHide: Subscription = this.modalService.onHide.subscribe(
       result => {
         console.log(`Deleting note = ${note.name}`)
-        if(this.bsModalRef.content.confirm) {
+        if (this.bsModalRef.content.confirm) {
           this.removeProcess = true;
           this.removeNote(note);
         }
-          
-      }, 
+        subsribeOnHide.unsubscribe();
+      },
       error => console.log("Confirm remove error")
     )
+
   }
 
   private removeNote(note: Note) {
-    
-    
+
+
     note.pending = true;
     let id: number = note.id;
 
     this.noteService.removeNote(id + "")
       .subscribe(
-        data => {
-          this.removeProcess = false;
-          note.pending = false;
-          if (data.status == 'fail') {
-            console.log("Error! Note was not removed");
-          } else
-            this.notes = this.notes.filter(note => note.id != id);          
-        },
-        err => {
-          this.removeProcess = false;
-          note.pending = false;
+      data => {
+        this.removeProcess = false;
+        note.pending = false;
+        if (data.status == 'fail') {
           console.log("Error! Note was not removed");
-        }
+        } else
+          this.notes = this.notes.filter(note => note.id != id);
+      },
+      err => {
+        this.removeProcess = false;
+        note.pending = false;
+        console.log("Error! Note was not removed");
+      }
       )
   }
 
