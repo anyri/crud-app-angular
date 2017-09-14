@@ -1,0 +1,55 @@
+<div class="modal-header">
+    <h4 class="modal-title">Edit {{currentName}}</h4>
+    <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+          <span aria-hidden="true">&times;</span>
+        </button>
+</div>
+<form #editNoteForm="ngForm" (ngSubmit)="onSubmit()">
+<div class="modal-body">
+    <div class="form-group">
+        <label for="name">Name:</label>
+        <input type="text" class="form-control" id="name" placeholder="{{note.name}}" [(ngModel)]="note.name" required #name="ngModel"
+            name="name" minlength="4">
+        <div *ngIf="name.errors && (name.dirty || name.touched)" class="alert alert-danger">
+            <div [hidden]="!name.errors.required">
+                Required field
+            </div>
+            <div [hidden]="!name.errors.minlength">
+                Minimum 4 symbols
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label>Created:</label> {{note.createdAt | date}}, <label>Updated:</label> {{note.updatedAt | date}}
+    </div>
+    <div class="form-group">
+        <label for="desc">Description:</label><br>
+        <textarea id="desc" [(ngModel)]="note.description" required minlength="10" #desc="ngModel" name="desc">{{note.description}}</textarea>
+        <div *ngIf="desc.errors && (desc.dirty || desc.touched)" class="alert alert-danger">
+            <div [hidden]="!desc.errors.required">
+                Required field
+            </div>
+            <div [hidden]="!desc.errors.minlength">
+                Minimum 10 symbols
+            </div>
+        </div>
+    </div>
+    <div class="form-group">
+        <label for="text">Text:</label><br>
+        <textarea id="text" [(ngModel)]="note.text" required minlength="20" #text="ngModel" name="text">{{note.text}}</textarea>
+        <div *ngIf="text.errors && (text.dirty || text.touched)" class="alert alert-danger">
+            <div [hidden]="!text.errors.required">
+                Required field
+            </div>
+            <div [hidden]="!text.errors.minlength">
+                Minimum 20 symbols
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal-footer">
+        <button type="submit" class="btn btn-danger" [disabled]="!editNoteForm.form.valid">Update</button>
+    <!-- <button type="button" class="btn btn-danger" (click)="verify()">Update</button> -->
+    <button type="button" class="btn btn-default" (click)="bsModalRef.hide()">Cancel</button>
+</div>
+</form>

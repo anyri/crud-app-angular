@@ -27,9 +27,19 @@ export class NotesService {
             );
     }
 
-    getNote(id: string) {
+    getNote(id: number) {
         let queryStr: string = `api/note?id=${id}`;
         return this.http.get(queryStr)
+            .map(res => res.json())
+            .catch(error =>
+                Observable.throw(error.json().error || 'Server error')
+            )
+    }
+
+    updateNote(note: Note) {
+        let queryStr: string = `api/notes?id=${note.id}`;
+        
+        return this.http.put(queryStr, note)
             .map(res => res.json())
             .catch(error =>
                 Observable.throw(error.json().error || 'Server error')

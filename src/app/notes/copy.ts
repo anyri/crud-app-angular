@@ -8,7 +8,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/modal-options.class';
 import { Subscription } from 'rxjs/Subscription';
 
-import { EditNoteContentComponent } from '../confirmation/edit.note.component';
+import { EditNoteContentComponent } from '../confirmation/edit.content.component';
 import { ConfirmContentComponent } from '../confirmation/confirm.content.component';
 
 @Component({
@@ -35,7 +35,8 @@ export class NotesComponent implements OnInit {
   getNotes(): void {
     this.noteService.isError = false;
     this.pending = true;
-    this.noteService.getNotes().subscribe(
+    this.noteService.getNotes()
+      .subscribe(
       data => {
         this.pending = false;
         if (data.status == 'fail' || data.notes.length == 0) {
@@ -54,27 +55,9 @@ export class NotesComponent implements OnInit {
       });
   }
 
-  confirmEditNote(noteId: number) {
-    this.noteService.getNote(noteId).subscribe(
-      data => this.openConfirmEditNote(new Note(data.note)),
-      error => console.log('Error get note for edit')
-    ) 
-  }
-
-  private openConfirmEditNote(note: Note): void {
+  editNote(note: Note) {
     this.bsModalRef = this.modalService.show(EditNoteContentComponent);
-    this.bsModalRef.content.currentName = note.name;
-    this.bsModalRef.content.note = note;
-
-    let subsribeOnHide: Subscription = this.modalService.onHide.subscribe(
-      result => {
-        if (this.bsModalRef.content.submit) {
-          this.upadteNote(note);
-        }
-        subsribeOnHide.unsubscribe();
-      },
-      error => console.log("Edit error")
-    )
+    
   }
 
   confirmRemove(note: Note) {
@@ -97,26 +80,12 @@ export class NotesComponent implements OnInit {
 
   }
 
-  private upadteNote(note: Note) {
-    this.noteService.updateNote(note).subscribe(
-      data => {
-        if (data.status == 'fail') {
-          console.log("Error! Note was not updated");
-        } else  {
-          console.log("Note was updated");
-          this.getNotes();
-        }
-          
-      },
-      error => console.log("Error update")
-    )
-  }
-
   private removeNote(note: Note) {
     note.pending = true;
     let id: number = note.id;
 
-    this.noteService.removeNote(id + "").subscribe(
+    this.noteService.removeNote(id + "")
+      .subscribe(
       data => {
         note.pending = false;
         if (data.status == 'fail') {

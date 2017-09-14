@@ -11,7 +11,7 @@ import { NotesService } from '../notes.service';
   styleUrls: ['./note.component.scss']
 })
 export class NoteComponent implements OnInit {
-  noteId: string;
+  noteId: number;
   routeSubscriber: Subscription;
   currentNote: Note = null;
   pending: boolean;
@@ -23,7 +23,7 @@ export class NoteComponent implements OnInit {
 
   ngOnInit() {
     this.routeSubscriber = this.route.params.subscribe(params => {
-      this.noteId = params['id'];
+      this.noteId = +params['id'];
       this.getNote();
     });
   }

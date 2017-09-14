@@ -36,3 +36,6 @@
     background: transparent;
     border: none;
 }
+.modal-body textarea {
+    width: 100%;
+}

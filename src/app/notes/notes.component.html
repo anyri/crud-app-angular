@@ -1,6 +1,7 @@
 <div class="loader" *ngIf="pending"></div>
 
 <div *ngIf="notes.length">
+    <!-- <modal-edit-note></modal-edit-note> -->
    
     <table class="table table-striped">
         <thead>
@@ -18,10 +19,11 @@
                 <td class="col-md-1"><span>{{note.updatedAt | date }}</span></td>
                 <td class="col-md-2"><a [routerLink]="['/note', note.id]">{{note.name}}</a></td>
                 <td class="col-md-8">{{note.description}}</td>
-                <td><button [disabled]="removeProcess" (click)="confirmRemove(note)" class="icon-btn"> <span class="glyphicon glyphicon-remove-circle"></span></button></td>
-                <!-- <td><button [disabled]="note.pending" (click)="removeNote(note)" class="icon-btn"> <span class="glyphicon glyphicon-remove-circle"></span></button></td> -->
+                <td>
+                    <button (click)="confirmEditNote(note.id)" class="icon-btn"> <span  class="glyphicon glyphicon-edit"></span></button>
+                    <button [disabled]="note.pending" (click)="confirmRemove(note)" class="icon-btn"> <span class="glyphicon glyphicon-remove-circle"></span></button>
+                </td>
             </tr>
-
         </tbody>
     </table>
 
