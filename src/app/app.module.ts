@@ -14,7 +14,7 @@ import { NotesComponent } from './notes/notes.component';
 import { NoteComponent } from './note/note.component';
 import { NotesService } from './notes.service';
 import { ErrorPageComponent } from './error-page/error-page.component';
-import { EditNoteContentComponent } from './confirmation/edit.note.component';
+import { EditNoteContentComponent } from './edit-note/edit.note.component';
 import { ConfirmContentComponent } from './confirmation/confirm.content.component';
 
 

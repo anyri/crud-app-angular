@@ -8,7 +8,7 @@ import { BsModalService } from 'ngx-bootstrap/modal';
 import { BsModalRef } from 'ngx-bootstrap/modal/modal-options.class';
 import { Subscription } from 'rxjs/Subscription';
 
-import { EditNoteContentComponent } from '../confirmation/edit.note.component';
+import { EditNoteContentComponent } from '../edit-note/edit.note.component';
 import { ConfirmContentComponent } from '../confirmation/confirm.content.component';
 
 @Component({
@@ -22,6 +22,7 @@ export class NotesComponent implements OnInit {
   pending: boolean;
   params: NotesParams;
   bsModalRef: BsModalRef;
+  subsribeOnHide: Subscription;
 
   constructor(private noteService: NotesService, private router: Router, private modalService: BsModalService) {
     this.params = this.noteService.getParams();
@@ -54,24 +55,26 @@ export class NotesComponent implements OnInit {
       });
   }
 
-  confirmEditNote(noteId: number) {
+  openEditNoteModal(noteId: number) {
+    this.bsModalRef = this.modalService.show(EditNoteContentComponent);
+    
     this.noteService.getNote(noteId).subscribe(
-      data => this.openConfirmEditNote(new Note(data.note)),
+      data => this.EditNoteSettings(new Note(data.note)),
       error => console.log('Error get note for edit')
     ) 
   }
 
-  private openConfirmEditNote(note: Note): void {
-    this.bsModalRef = this.modalService.show(EditNoteContentComponent);
+  private EditNoteSettings(note: Note): void {    
     this.bsModalRef.content.currentName = note.name;
     this.bsModalRef.content.note = note;
+    this.bsModalRef.content.pending = false;
 
-    let subsribeOnHide: Subscription = this.modalService.onHide.subscribe(
+    this.subsribeOnHide = this.modalService.onHide.subscribe(
       result => {
         if (this.bsModalRef.content.submit) {
           this.upadteNote(note);
         }
-        subsribeOnHide.unsubscribe();
+        this.subsribeOnHide.unsubscribe();
       },
       error => console.log("Edit error")
     )
