@@ -36,6 +36,14 @@ export class NotesService {
             )
     }
 
+    addNote(note: Note) {
+        return this.http.post('api/notes', note)
+            .map(res => res.json())
+            .catch(error =>
+                Observable.throw(error.json().error || 'Server error')
+            )
+    }
+
     updateNote(note: Note) {
         let queryStr: string = `api/notes?id=${note.id}`;
         

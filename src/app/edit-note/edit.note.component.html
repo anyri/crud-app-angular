@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h4 class="modal-title">Edit {{currentName}}</h4>
+    <h4 class="modal-title">{{ isNewNote? 'Create New Note' : 'Edit'}} {{currentName}}</h4>
     <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
           <span aria-hidden="true">&times;</span>
         </button>
@@ -51,7 +51,7 @@
     <!-- </div> -->
 </div>
 <div class="modal-footer">
-        <button type="submit" class="btn btn-danger" [disabled]="!editNoteForm.form.valid">Update</button>
+        <button type="submit" class="btn btn-danger" [disabled]="!editNoteForm.form.valid">{{ isNewNote ? 'Create' : 'Update'}}</button>
     <!-- <button type="button" class="btn btn-danger" (click)="verify()">Update</button> -->
     <button type="button" class="btn btn-default" (click)="bsModalRef.hide()">Cancel</button>
 </div>

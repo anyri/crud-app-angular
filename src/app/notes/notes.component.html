@@ -1,7 +1,8 @@
 <div class="loader" *ngIf="pending"></div>
 
 <div *ngIf="notes.length">
-    <!-- <modal-edit-note></modal-edit-note> -->
+    
+    <button (click)="openNewNoteModal()" class="btn btn-success">Add New Note</button>
    
     <table class="table table-striped">
         <thead>

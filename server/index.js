@@ -21,6 +21,16 @@ app.put('/api/notes', (req, res) => {
   }
 })
 
+app.post('/api/notes', (req, res) => {  
+  if(req.body) {
+    let note = req.body;    
+    data.notes.push(note);
+    setTimeout(() => res.send({ status: 'ok' }), 1200);
+  } else {
+    setTimeout(() => res.send({ status: 'fail' }), 1200);
+  }  
+})
+
 app.get('/api/note', (req, res) => {
   const id = req.query.id;
   if (id) {

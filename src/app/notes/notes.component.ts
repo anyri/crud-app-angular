@@ -22,7 +22,7 @@ export class NotesComponent implements OnInit {
   pending: boolean;
   params: NotesParams;
   bsModalRef: BsModalRef;
-  subsribeOnHide: Subscription;
+  subscription: Subscription;
 
   constructor(private noteService: NotesService, private router: Router, private modalService: BsModalService) {
     this.params = this.noteService.getParams();
@@ -58,9 +58,12 @@ export class NotesComponent implements OnInit {
   openEditNoteModal(noteId: number) {
     this.bsModalRef = this.modalService.show(EditNoteContentComponent);
     
-    this.noteService.getNote(noteId).subscribe(
+    this.subscription = this.noteService.getNote(noteId).subscribe(
       data => this.EditNoteSettings(new Note(data.note)),
-      error => console.log('Error get note for edit')
+      error => {
+        console.log('Error get note for edit');
+        this.subscription.unsubscribe();
+      }
     ) 
   }
 
@@ -69,14 +72,42 @@ export class NotesComponent implements OnInit {
     this.bsModalRef.content.note = note;
     this.bsModalRef.content.pending = false;
 
-    this.subsribeOnHide = this.modalService.onHide.subscribe(
+    let subsribeOnHide: Subscription =  this.modalService.onHide.subscribe(
       result => {
         if (this.bsModalRef.content.submit) {
           this.upadteNote(note);
+        } else {
+          this.subscription.unsubscribe();
         }
-        this.subsribeOnHide.unsubscribe();
+        subsribeOnHide.unsubscribe();
       },
-      error => console.log("Edit error")
+      error => {
+        console.log("Error edit the note");
+        this.subscription.unsubscribe();
+        subsribeOnHide.unsubscribe();
+      }
+    )
+  }
+
+  openNewNoteModal() {
+    this.bsModalRef = this.modalService.show(EditNoteContentComponent);
+    this.bsModalRef.content.note.createdAt = new Date();
+    this.bsModalRef.content.note.updatedAt = new Date();
+    this.bsModalRef.content.isNewNote = true;
+    this.bsModalRef.content.pending = false;
+
+    let subsribeOnHide: Subscription = this.modalService.onHide.subscribe(
+      result => {
+        if (this.bsModalRef.content.submit) {
+          this.bsModalRef.content.note.id = this.total + 1;          
+          this.createNote(this.bsModalRef.content.note);
+        }
+        subsribeOnHide.unsubscribe();
+      },
+      error => {
+        console.log("Error create new note");
+        subsribeOnHide.unsubscribe();
+      }
     )
   }
 
@@ -95,23 +126,48 @@ export class NotesComponent implements OnInit {
         }
         subsribeOnHide.unsubscribe();
       },
-      error => console.log("Confirm remove error")
+      error => {
+        console.log("Confirm remove error");
+        subsribeOnHide.unsubscribe();
+      }
+    )
+
+  }
+
+  private createNote(note: Note) {
+    this.subscription = this.noteService.addNote(note).subscribe(
+      data => {
+        if (data.status == 'fail') {
+          console.log("Error!The Note was not added");
+        } else  {
+          console.log("The Note was added");
+          this.getNotes();
+        }
+        this.subscription.unsubscribe();
+      },
+      error => {
+        console.log("Error add new Note");
+        this.subscription.unsubscribe();
+      }
     )
 
   }
 
   private upadteNote(note: Note) {
-    this.noteService.updateNote(note).subscribe(
+    this.subscription = this.noteService.updateNote(note).subscribe(
       data => {
         if (data.status == 'fail') {
           console.log("Error! Note was not updated");
         } else  {
           console.log("Note was updated");
           this.getNotes();
-        }
-          
+        }  
+        this.subscription.unsubscribe();
       },
-      error => console.log("Error update")
+      error => {
+        console.log("Error update");
+        this.subscription.unsubscribe();
+      } 
     )
   }
 
@@ -119,19 +175,22 @@ export class NotesComponent implements OnInit {
     note.pending = true;
     let id: number = note.id;
 
-    this.noteService.removeNote(id + "").subscribe(
+    this.subscription = this.noteService.removeNote(id + "").subscribe(
       data => {
         note.pending = false;
         if (data.status == 'fail') {
           console.log("Error! Note was not removed");
         } else
           this.notes = this.notes.filter(note => note.id != id);
+
+        this.subscription.unsubscribe();
       },
       err => {
         note.pending = false;
         console.log("Error! Note was not removed");
+        this.subscription.unsubscribe();
       }
-      )
+    )
   }
 
   checkSort(sortBy: string, sortOrder: string): boolean {

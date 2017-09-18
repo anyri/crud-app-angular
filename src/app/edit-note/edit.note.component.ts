@@ -7,9 +7,9 @@ import { Note } from '../notes/note.model';
     templateUrl: './edit.note.component.html'
 })
 export class EditNoteContentComponent {
-    public currentName: string;
+    public currentName: string = "";
     public note: Note = new Note({id: 0, name: '', createdAt: '', updatedAt: '', description: '', text: '' });
-    // public note: Note;
+    public isNewNote: boolean = false;
     public submit: boolean;
     public pending = true;
     constructor(public bsModalRef: BsModalRef) { }
