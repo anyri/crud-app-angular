@@ -55,11 +55,34 @@ export class NotesComponent implements OnInit {
       });
   }
 
-  openEditNoteModal(noteId: number) {
+  openEditNoteModal(note: Note) {
     this.bsModalRef = this.modalService.show(EditNoteContentComponent);
+
+    let subsribeOnHide: Subscription =  this.modalService.onHide.subscribe(
+      result => {
+        if (this.bsModalRef.content.submit && !this.bsModalRef.content.pending) {
+          note.pending = true;
+          this.upadteNote(this.bsModalRef.content.note);
+        }
+
+        this.subscription.unsubscribe();
+        subsribeOnHide.unsubscribe();
+      },
+      error => {
+        console.log("Error edit the note");
+        this.subscription.unsubscribe();
+        subsribeOnHide.unsubscribe();
+      }
+    );
     
-    this.subscription = this.noteService.getNote(noteId).subscribe(
-      data => this.EditNoteSettings(new Note(data.note)),
+    this.subscription = this.noteService.getNote(note.id).subscribe(
+      data => {
+        let note = data.note;
+        this.bsModalRef.content.currentName = note.name;
+        this.bsModalRef.content.note = note;
+        this.bsModalRef.content.pending = false;
+
+      },
       error => {
         console.log('Error get note for edit');
         this.subscription.unsubscribe();
@@ -88,6 +111,7 @@ export class NotesComponent implements OnInit {
       }
     )
   }
+
 
   openNewNoteModal() {
     this.bsModalRef = this.modalService.show(EditNoteContentComponent);
@@ -122,6 +146,7 @@ export class NotesComponent implements OnInit {
       result => {
         console.log(`Deleting note = ${note.name}`)
         if (this.bsModalRef.content.confirm) {
+          note.pending = true;
           this.removeNote(note);
         }
         subsribeOnHide.unsubscribe();
@@ -154,36 +179,43 @@ export class NotesComponent implements OnInit {
   }
 
   private upadteNote(note: Note) {
-    this.subscription = this.noteService.updateNote(note).subscribe(
+     let subscription = this.noteService.updateNote(note).subscribe(
       data => {
         if (data.status == 'fail') {
           console.log("Error! Note was not updated");
         } else  {
           console.log("Note was updated");
-          this.getNotes();
+          // this.getNotes();
+          this.notes = this.notes.map(item => {
+            if(item.id == note.id)
+              return note;
+            
+            return item;
+          })
         }  
-        this.subscription.unsubscribe();
+        subscription.unsubscribe();
+        note.pending = false;
       },
       error => {
         console.log("Error update");
-        this.subscription.unsubscribe();
+        subscription.unsubscribe();
+        note.pending = false;
       } 
     )
   }
 
-  private removeNote(note: Note) {
-    note.pending = true;
+  private removeNote(note: Note) {    
     let id: number = note.id;
 
-    this.subscription = this.noteService.removeNote(id + "").subscribe(
-      data => {
-        note.pending = false;
+    this.subscription = this.noteService.removeNote(id).subscribe(
+      data => {        
         if (data.status == 'fail') {
           console.log("Error! Note was not removed");
         } else
           this.notes = this.notes.filter(note => note.id != id);
 
         this.subscription.unsubscribe();
+        note.pending = false;
       },
       err => {
         note.pending = false;

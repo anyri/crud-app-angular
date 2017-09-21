@@ -1,15 +1,16 @@
 
 export class Note {
     id: number;
-    name: string;
+    name: string = "";
     createdAt: string;
     updatedAt: string;
-    description: string;
-    text: string;
+    description: string = "";
+    text: string = "";
     pending?: boolean;
 
-    constructor(noteSource: Note) {
-        Object.assign(this, noteSource);
+    constructor(noteSource?: Note) {
+        if(noteSource)
+            Object.assign(this, noteSource);
     };
     
 }

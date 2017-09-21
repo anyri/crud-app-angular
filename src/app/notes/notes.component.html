@@ -15,13 +15,13 @@
             </tr>
         </thead>
         <tbody>
-            <tr *ngFor="let note of notes">
+            <tr *ngFor="let note of notes" [ngClass]="{'pending' : note.pending}">
                 <td class="col-md-1"><span>{{note.createdAt | date }}</span></td>
                 <td class="col-md-1"><span>{{note.updatedAt | date }}</span></td>
                 <td class="col-md-2"><a [routerLink]="['/note', note.id]">{{note.name}}</a></td>
                 <td class="col-md-8">{{note.description}}</td>
                 <td>
-                    <button (click)="openEditNoteModal(note.id)" class="icon-btn"> <span  class="glyphicon glyphicon-edit"></span></button>
+                    <button [disabled]="note.pending" (click)="openEditNoteModal(note)" class="icon-btn"> <span  class="glyphicon glyphicon-edit"></span></button>
                     <button [disabled]="note.pending" (click)="confirmRemove(note)" class="icon-btn"> <span class="glyphicon glyphicon-remove-circle"></span></button>
                 </td>
             </tr>

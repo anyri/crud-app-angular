@@ -54,7 +54,7 @@ export class NotesService {
             )
     }
 
-    removeNote(id: string) {
+    removeNote(id: number) {
         return this.http.delete(`api/notes?id=${id}`) 
             .map(res => res.json() || [])
             .catch(error =>

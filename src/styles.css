@@ -39,3 +39,6 @@
 .modal-body textarea {
     width: 100%;
 }
+.pending {
+    opacity: 0.5;
+}
