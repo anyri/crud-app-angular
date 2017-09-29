@@ -2,7 +2,54 @@ const express = require('express');
 const app = express();
 const data = require('./mock.data.json');
 const bodyParser = require('body-parser');
+const passwordHash = require('password-hash');
+const jwt = require('jsonwebtoken');
+
 app.use(bodyParser.json());
+
+const AUTH_TOKEN = {
+  secretKey: 'MySecretKey',
+  expiresIn: 2592000
+};
+
+const getUserInfo = (userObj) => {
+  return {
+    id: userObj.id,
+    login: userObj.login,
+    role: userObj.role,
+    name: userObj.name
+  }
+};
+
+const doAuthorize = (req, res) => {
+  return new Promise((resolve, reject) => {
+    let token = req.headers.authorization;
+    jwt.verify(token, AUTH_TOKEN.secretKey, (err, decoded) => {
+      if (!err) { // resolve userInfo
+        return resolve(getUserInfo(decoded));
+      }
+      if (!res) { // reject the error by default
+        reject(err);
+      } else { // send error response if possible
+        res.send({ status: 'error', error: err });
+      }
+    });
+  })
+};
+
+app.post('/api/login', (req, res) => {
+  let login = req.body.login;
+  let password = req.body.password;
+  if (!login || !password)
+    return res.send({ status: 'fail', message: 'No login or password' });
+  const user = data.users.find(user => user.login === login);
+  if(!user)
+    return res.send({ status: 'fail', message: 'Invalid login' });
+  if (!passwordHash.verify(password, user.hash))
+    return res.send({ status: 'fail', message: 'Invalid password' });
+  let token = jwt.sign(getUserInfo(user), AUTH_TOKEN.secretKey, { expiresIn: AUTH_TOKEN.expiresIn });
+  res.send({ status: 'ok', userInfo: getUserInfo(user), token });
+});
 
 app.put('/api/notes', (req, res) => {
   let id = req.query.id;
@@ -124,5 +171,3 @@ app.get('/api/test', (req, res) => {
 app.listen(3003, () => {
   console.log('Example app listening on port 3003!');
 }); 
-
-
