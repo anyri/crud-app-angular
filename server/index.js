@@ -21,9 +21,12 @@ const getUserInfo = (userObj) => {
   }
 };
 
-const doAuthorize = (req, res) => {
+const doAuthorize = (req) => {
   return new Promise((resolve, reject) => {
-    let token = req.headers.authorization;
+    let token = req.headers.authorization.substr(7);
+    if (!token || token.length < 10) {
+      return reject('Invalid token bearer');
+    }
     jwt.verify(token, AUTH_TOKEN.secretKey, (err, decoded) => {
       if (!err) { // resolve userInfo
         return resolve(getUserInfo(decoded));
@@ -31,11 +34,20 @@ const doAuthorize = (req, res) => {
       if (!res) { // reject the error by default
         reject(err);
       } else { // send error response if possible
-        res.send({ status: 'error', error: err });
+        reject('Invalid token');
       }
     });
   })
 };
+
+app.get('/api/userInfo', (req, res) =>
+  doAuthorize(req)
+    .then(user => {
+      console.log('Authenticated as ' + user.login);
+      res.send({ status: 'ok', userInfo: getUserInfo(user) });
+    })
+    .catch(error => res.send({ status: 'fail', message: `Can't get user info. ${error}` }) )
+);
 
 app.post('/api/login', (req, res) => {
   let login = req.body.login;
