@@ -7,5 +7,21 @@
       <li><a routerLink="/home" routerLinkActive="active__link">Home</a></li>
       <li><a routerLink="/notes" routerLinkActive="active__link">Notes</a></li>
     </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <!-- <li><a href="#"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li> -->
+      <li (click)="openAuthorizationModal()" class="link vertical-align" *ngIf="!activeUser"><span class="glyphicon glyphicon-log-in"></span> Log In</li>
+      <li class="link vertical-align" *ngIf="activeUser">
+        <span dropdown>
+              <a href dropdownToggle (click)="false">Hi, {{activeUser.name}} <span class="caret"></span></a>
+        <ul *dropdownMenu class="dropdown-menu">
+          <li>
+            <a class="dropdown-item" href (click)="singOut()">Sing out</a>
+            <a class="dropdown-item" href="#" (click)="false">Settings</a>
+          </li>
+        </ul>
+        </span>
+      </li>
+    </ul>
+
   </div>
 </nav>

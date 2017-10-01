@@ -1,0 +1,43 @@
+<div class="card card-container custom-modal">
+
+    <button type="button" class="close pull-right" aria-label="Close" (click)="bsModalRef.hide()">
+            <span aria-hidden="true">&times;</span>
+          </button>
+    <img id="profile-img" class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" />
+    <p id="profile-name" class="profile-name-card"></p>
+    <form #authorizeForm="ngForm" (ngSubmit)="verify()" name="authorizeForm" class="form-signin">
+        <input type="text" id="login" name="login" class="form-control" placeholder="Login" required autofocus [(ngModel)]="login"
+            #fLogin="ngModel" minlength="4">
+        <div *ngIf="fLogin.errors && (fLogin.dirty || fLogin.touched)" class="alert alert-danger">
+            <div [hidden]="!fLogin.errors.required">
+                Required field
+            </div>
+            <div [hidden]="!fLogin.errors.minlength">
+                Minimum 4 symbols
+            </div>
+        </div>
+        <input type="password" id="password" name="password" class="form-control" placeholder="Password" required [(ngModel)]="password"
+            #fPassword="ngModel">
+        <div *ngIf="fPassword.errors && (fPassword.dirty || fPassword.touched)" class="alert alert-danger">
+            <div [hidden]="!fPassword.errors.required">
+                Required field
+            </div>
+            <div [hidden]="!fPassword.errors.minlength">
+                Minimum 4 symbols
+            </div>
+        </div>
+        <div class="alert alert-danger" *ngIf="errorAuthorize">
+            Sorry, login or password you entered do not match. Please try again.
+        </div>
+        <div id="remember" class="checkbox">
+            <label>
+                    <input type="checkbox" [checked]="rememberMe" (change)="rememberMe = !rememberMe"> Remember me
+                </label>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block btn-signin" [disabled]="!authorizeForm.form.valid">Log In</button>
+    </form>
+    <!-- /form -->
+    <a routerLink="/recovery" (click)="bsModalRef.hide()" class="forgot-password">Forgot the password?</a>
+
+</div>
+<!-- /card-container -->

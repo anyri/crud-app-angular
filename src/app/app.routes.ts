@@ -4,6 +4,7 @@ import { HomeComponent } from './home/home.component';
 import { NotesComponent } from './notes/notes.component';
 import { NoteComponent } from './note/note.component';
 import { ErrorPageComponent } from './error-page/error-page.component';
+import { RecoveryComponent } from './recovery/recovery.component';
 
 export const APP_ROUTES: Routes = [
     {
@@ -26,10 +27,13 @@ export const APP_ROUTES: Routes = [
     {
         path: 'note/:id',
         component: NoteComponent
-    }
-    ,
+    },
     {
         path: 'error/:type',
         component: ErrorPageComponent
+    },
+    {
+        path: 'recovery',
+        component: RecoveryComponent
     }
 ];
